@@ -14,7 +14,7 @@ class FieldDataTypesModel(models.Model):
 
 
 class SchemaFieldsModel(models.Model):
-    schema = models.ForeignKey("SchemaModel", on_delete=models.CASCADE)
+    key_schema = models.ForeignKey("SchemaModel", on_delete=models.CASCADE)
     order = models.IntegerField(default=0)
     data_field_name = models.CharField(max_length=255)
     data_type = models.ForeignKey("FieldDataTypesModel", on_delete=models.CASCADE)
@@ -22,8 +22,9 @@ class SchemaFieldsModel(models.Model):
     class Meta:
         db_table = "schema_fields"
         constraints = [
+
             UniqueConstraint(
-                fields=["schema", "order"],
+                fields=["key_schema", "order"],
                 name="Integer ordering for each new schema"
             )
         ]
@@ -33,7 +34,6 @@ class SchemaModel(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     is_generated = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
-
     csv_file = models.FileField(blank=True)
 
     class Meta:

@@ -1,3 +1,5 @@
+import uuid
+
 from apps.scv_generator.constants.list_data_names import FEMAILE_NAMES, MALE_NAMES, LAST_NAMES
 from apps.scv_generator.constants.list_data_jobs import JOB_TITLES
 from apps.scv_generator.constants.list_data_mails import MAILS_ENDINGS
@@ -41,7 +43,7 @@ def get_company(custom_list: list = None) -> str:
 
 
 def get_email(
-        full_name: str,
+        full_name: str = None,
         start: str = None,
         ending: str = None,
         mail_addresses: str = None,
@@ -54,6 +56,8 @@ def get_email(
     :param ending: Endings of string before "@" symbol
     :return:
     """
+    if not full_name:
+        full_name = "".join(str(uuid.uuid1()).split("-"))
     address = [] if start is None else [start]
     address.append(".".join(full_name.lower().split(" ")))
     if ending:
@@ -71,7 +75,7 @@ def get_phone_number(country_code: str = "38", operator_code: str = "098", numbe
     return f"+{country_code}{operator_code}{''.join(last_digits)}"
 
 
-def get_text(words_count: int) -> str:
+def get_text(words_count: int = 30) -> str:
     """
     Get lorem text
     :param words_count: Length of sentence
@@ -80,7 +84,7 @@ def get_text(words_count: int) -> str:
     return TextLorem(srange=(words_count, words_count)).sentence()
 
 
-def get_integer(number_of_digits: int) -> str:
+def get_integer(number_of_digits: int = 5) -> str:
     """
     Return number of needed length
     :param number_of_digits:
