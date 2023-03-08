@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 lorem = "*"
 django-extensions = "*"
+django-bootstrap-v5 = "*"
+channels = {extras = ["daphne"], version = "*"}
 
 [dev-packages]
 
