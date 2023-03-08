@@ -13,8 +13,13 @@ class FieldDataTypesModel(models.Model):
         db_table = 'data_types'
 
 
+class FieldsSavedOptionsModel(models.Model):
+    key_field_schema = models.ForeignKey("SchemaFieldsModel", on_delete=models.CASCADE)
+    options = models.JSONField()
+
+
 class SchemaFieldsModel(models.Model):
-    key_schema = models.ForeignKey("SchemaModel", on_delete=models.CASCADE)
+    key_schema = models.ForeignKey("DataSchema", on_delete=models.CASCADE)
     order = models.IntegerField(default=0)
     data_field_name = models.CharField(max_length=255)
     data_type = models.ForeignKey("FieldDataTypesModel", on_delete=models.CASCADE)
@@ -22,7 +27,6 @@ class SchemaFieldsModel(models.Model):
     class Meta:
         db_table = "schema_fields"
         constraints = [
-
             UniqueConstraint(
                 fields=["key_schema", "order"],
                 name="Integer ordering for each new schema"
@@ -30,11 +34,18 @@ class SchemaFieldsModel(models.Model):
         ]
 
 
-class SchemaModel(models.Model):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+class SchemaFileModel(models.Model):
+    data_schema = models.ForeignKey("DataSchema", on_delete=models.CASCADE)
     is_generated = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     csv_file = models.FileField(blank=True)
 
     class Meta:
-        db_table = "user_schemas"
+        db_table = "file_model_schema"
+
+
+class DataSchema(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    title = models.CharField(max_length=255)
