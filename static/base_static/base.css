@@ -1,3 +1,6 @@
 root{
     --main-light-background: #E7E5DF;
 }
+body{
+    background-color: var(--main-light-background);
+}

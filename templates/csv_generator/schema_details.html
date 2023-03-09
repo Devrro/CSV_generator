@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-9">
+
+            <div class="mt-3">
+                <h2>{{ schema.title }}</h2>
+                <table class="table">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Column name</th>
+                        <th class="text-center" scope="col">Column type</th>
+                    </tr>
+
+                    </thead>
+                    <tbody>
+                    {% for field in list_fields %}
+                        <tr>
+                            <th>{{ field.order }}</th>
+                            <td>{{ field.data_field_name }}</td>
+                            <td class="text-uppercase">{{ field.data_type__data_type}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="card  mt-3">
+            <div class="card-header">
+                <div class="col-12">
+                    <div class="row d-flex justify-content-between">
+                        <div class="col-6"><h2>Data sets</h2></div>
+                        <div class="col-6 d-flex flex-column " id="input_data" style="width: 400px">
+                            <label class="mb-1" for="count_of_rows">Rows: </label>
+                            <input class="form-control mb-1" id="count_of_rows" placeholder="100" type="number">
+                            <button class="btn btn-primary"> Generate data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+
+            </div>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Status</th>
+                    <th class="text-center" scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for file in list_files %}
+                    <tr>
+                        <td>file.created</td>
+                        <td>file.is_generated</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+{% endblock content %}

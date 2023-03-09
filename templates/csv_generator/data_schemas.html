@@ -5,7 +5,7 @@
             <div class="card-header" style="height: 60px">
                 <div class="col d-flex justify-content-between align-items-center">
                     <h3>Schemas</h3>
-                    <button class="btn btn-primary"> Create schema</button>
+                    <a href="{% url 'create_schema' %}" class="btn btn-primary"> Create schema</a>
                 </div>
             </div>
             <div class="card-body col-8">
@@ -19,17 +19,19 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>School</td>
-                        <td>2018/10/20</td>
-                        <td>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-secondary">Edit schema</button>
-                                <button type="button" class="btn btn-danger">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
+                    {% for data_schema in data_schemas %}
+                        <tr>
+                            <th scope="row">1</th>
+                            <td><a href="{% url 'schema_details' data_schema.id %}">{{ data_schema.title }}</a></td>
+                            <td>{{ data_schema.updated }}</td>
+                            <td>
+                                <div class="btn-group w-100" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-secondary">Edit schema</button>
+                                    <button type="button" class="btn btn-danger">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
 
