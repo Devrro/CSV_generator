@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>CSV Generator</title>
-{#    <link rel="stylesheet" href="{% static 'base_static/base.css' %}">#}
+    <link rel="stylesheet" href="{% static 'base_static/base.css' %}">
+    <script src="{% static 'scripts/fields_form.js' %}"></script>
+    <script src="{% static 'scripts/schema_detail_view.js' %}"></script>
+    <script src="{% static 'scripts/web_socket.js' %}"></script>
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
@@ -18,9 +21,18 @@
             </li>
         </ul>
         <ul class="nav nav-pills">
-            <li class="nav-item">
-                <a href="{% url 'login' %}" class="nav-link active">Login</a>
-            </li>
+            {% if request.user.is_authenticated %}
+                <li class="nav-item mx-3 text-center d-flex align-items-center">
+                    <p style="margin: 0;padding: 0">Hello, {{ request.user }}!</p>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'logout' %}" class="nav-link active">Logout</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link active">Login</a>
+                </li>
+            {% endif %}
         </ul>
     </header>
 </div>

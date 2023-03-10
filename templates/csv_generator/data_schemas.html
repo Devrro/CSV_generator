@@ -12,7 +12,7 @@
                 <table class="table">
                     <thead class="thead-dark">
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col">ID</th>
                         <th scope="col">Table</th>
                         <th scope="col">Modified</th>
                         <th class="text-center" scope="col">Actions</th>
@@ -21,7 +21,7 @@
                     <tbody>
                     {% for data_schema in data_schemas %}
                         <tr>
-                            <th scope="row">1</th>
+                            <th scope="row">{{ data_schema.id }}</th>
                             <td><a href="{% url 'schema_details' data_schema.id %}">{{ data_schema.title }}</a></td>
                             <td>{{ data_schema.updated }}</td>
                             <td>

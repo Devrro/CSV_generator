@@ -1,6 +1,91 @@
 {% extends 'base/base.html' %}
+{% load static %}
 {% block content %}
-    <div class="container">
-        <h2>Hello there!</h2>
+
+    <div class="container rounded-3 py-3 px-3 mt-2">
+        <form id="schema_form_id" method="POST" action="">
+            {% csrf_token %}
+            <div class="col-6 mb-2">
+                <div class="row d-flex flex-row-reverse">
+                    <div class="col-3">
+                        <button type="submit" id="send_new_schema_configuration" onclick="new_submit()"
+                                class="btn btn-primary" style="background-color: #9fe9d1">Create schema
+                        </button>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <label for="schema_name">
+                        Sсhema name
+                        <input class="form-control" id="schema_name" type="text" name="schema_name" value="New schema">
+                    </label>
+                </div>
+                <div class="row mb-2">
+                    <label for="column_separator">
+                        Column separator
+                        <select class="form-control" id="column_separator" name="column_separator">
+                            <option value="1">Comma (,)</option>
+                            <option value="2">Semicolon (;)</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="row mb-5">
+                    <label for="string_character">
+                        String character
+                        <select class="form-control" id="string_character" name="string_character">
+                            <option value='2'>Double-quote (")</option>
+                            <option value="1">Quote (')</option>
+                        </select>
+                    </label>
+                </div>
+                <div id="append_to" class="">
+                </div>
+            </div>
+        </form>
+
+        <div class="row d-flex flex-column">
+            <div class="col-6">
+
+                <div data-row="0" id="column_insert" class="row mb-1 d-flex rounded-2 border_style">
+                    <div class="col-12">
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                <label for="column_name">
+                                    Column name
+                                    <input class="form-control" name="column_name" type="text">
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <label for="data_type">Data type:</label>
+                                <select class="text-capitalize form-control form-select" name="data_type"
+                                        id="data_type">
+                                    {% for field_type in field_types %}
+                                        <option class="text-capitalize" value="{{ field_type.id }}">
+                                            {{ field_type.data_type }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-4" style="display: none">
+                                <label for="option_values">
+                                    <span>Options</span>
+                                    <input name="option_values" class="form-control option_values" type="text" value=''>
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <label for="order">
+                                    <span>Order</span>
+                                    <input name="order" class="form-control order_value" type="number" min=1 value=''>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <button onclick="create_column()" class="btn btn-primary">Add column</button>
+            </div>
+        </div>
     </div>
+
 {% endblock content %}

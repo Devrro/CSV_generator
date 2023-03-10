@@ -1,9 +1,11 @@
 {% extends 'base/base.html' %}
 
+{% load static %}
+
 {% block content %}
     <div class="container">
         <div class="col-9">
-
+            <button type="button" onclick="send_to_server()">Send hello</button>
             <div class="mt-3">
                 <h2>{{ schema.title }}</h2>
                 <table class="table">
@@ -20,7 +22,7 @@
                         <tr>
                             <th>{{ field.order }}</th>
                             <td>{{ field.data_field_name }}</td>
-                            <td class="text-uppercase">{{ field.data_type__data_type}}</td>
+                            <td class="text-uppercase">{{ field.data_type__data_type }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -33,11 +35,17 @@
             <div class="card-header">
                 <div class="col-12">
                     <div class="row d-flex justify-content-between">
-                        <div class="col-6"><h2>Data sets</h2></div>
-                        <div class="col-6 d-flex flex-column " id="input_data" style="width: 400px">
-                            <label class="mb-1" for="count_of_rows">Rows: </label>
-                            <input class="form-control mb-1" id="count_of_rows" placeholder="100" type="number">
-                            <button class="btn btn-primary"> Generate data</button>
+                        <div class="col-6"><h2>Data sets</h2>
+                            <form id="data_generation_form" method="POST">
+                                {% csrf_token %}
+                                <div class="col-6 d-flex flex-column " id="input_data" style="width: 400px">
+                                    <label class="mb-1" for="count_of_rows">Rows: </label>
+                                    <input class="form-control mb-1" id="count_of_rows" placeholder="100" min="1" type="number">
+                                    <button type="button" onclick="generate_rows()" class="btn btn-primary"> Generate
+                                        data
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -50,7 +58,7 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Created</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Is ready</th>
                     <th class="text-center" scope="col">Actions</th>
                 </tr>
                 </thead>
@@ -58,8 +66,22 @@
 
                 {% for file in list_files %}
                     <tr>
-                        <td>file.created</td>
-                        <td>file.is_generated</td>
+                        <td>{{ file.id }}</td>
+                        <td>{{ file.created }}</td>
+                        <td>{{ file.is_generated }}</td>
+                        <td>
+                            <div class="btn-group">
+
+                                <button class="btn btn-danger">DELETE</button>
+                                {% if file.is_generated %}
+                                    <button class="btn btn-primary">
+                                        <a class="text-light" style="text-decoration: none" href="http://localhost:8000/media/{{ file.csv_file }}">DOWNLOAD</a>
+                                    </button>
+                                {% endif %}
+
+                            </div>
+
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -67,6 +89,5 @@
         </div>
 
     </div>
-
 
 {% endblock content %}
