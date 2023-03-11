@@ -1,6 +1,5 @@
 function generate_rows() {
     const XHR = new XMLHttpRequest()
-    console.log(document.getElementById("data_generation_form"));
     const FD = new FormData(document.getElementById("data_generation_form"))
     XHR.addEventListener("load", (event) => {
         alert(event.target.responseText);
@@ -11,7 +10,6 @@ function generate_rows() {
     });
     const url = document.URL
     // Set up our request
-    console.log(`${url}` + `/generate_data`)
     XHR.open("POST", `${url}` + `/generate_data`, true);
 
     // // The data sent is what the user provided in the form

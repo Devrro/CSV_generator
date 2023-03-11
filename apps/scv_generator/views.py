@@ -2,7 +2,7 @@ import asyncio
 import json
 
 from asgiref.sync import sync_to_async
-from channels.db import database_sync_to_async
+from channels.layers import get_channel_layer
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.base import ContentFile
@@ -11,9 +11,12 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
-from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, SchemaFileModel
+from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, \
+    SchemaFileModel
 from apps.scv_generator.serializers import create_schema_model
 from apps.scv_generator.services_generator import create_csv_file
+
+from apps.scv_generator.consumers import FileProcessingConsumer
 
 
 class ListMainPage(ListView):
@@ -98,12 +101,23 @@ async def generate_data_helper(rows, schema, schema_fields_id, options=None, *ar
 
 
 async def async_view(request, *args, **kwargs):
-    rows = int(request.POST.get("count_of_rows"))
-    schema_fields_id = kwargs.get("pk")
-    create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
-    schema_model = await create_db_record(data_schema_id=schema_fields_id)
+    # rows = int(request.POST.get("count_of_rows"))
+    # schema_fields_id = kwargs.get("pk")
+    # create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
+    # schema_model = await create_db_record(data_schema_id=schema_fields_id)
+    # loop = asyncio.get_event_loop()
+    # loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
 
-    loop = asyncio.get_event_loop()
-    loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
+    channel_layer = get_channel_layer()
+    channel_layer.group_send(
+        "file_creation",
+        {"type": "message",  # Custom type
+         "text": "Hello from HTTP view", }
+    )
+    # print(channel_layer)
+    # channel_layer.send({
+    #     "type": "send_file_message",
+    #     "text": "Hello there!",
+    # })
 
-    return HttpResponse("Non-blocking HTTP request")
+    return HttpResponse("Data is being generated...Please wait")
