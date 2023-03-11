@@ -1,10 +1,44 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>CSV Generator</title>
+    <link rel="stylesheet" href="{% static 'base_static/base.css' %}">
+    <script src="{% static 'scripts/fields_form.js' %}"></script>
+    <script src="{% static 'scripts/schema_detail_view.js' %}"></script>
+    <script src="{% static 'scripts/web_socket.js' %}"></script>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
 </head>
 <body>
+<div class="container-fluid d-flex justify-content-center">
+    <header class="d-flex col-6 justify-content-center py-3">
+        <ul class="nav nav-pills me-auto">
+            <li class="nav-item">
+                <a href="http://localhost:8000" class="nav-link" aria-current="page">CSV Generator</a>
+            </li>
+        </ul>
+        <ul class="nav nav-pills">
+            {% if request.user.is_authenticated %}
+                <li class="nav-item mx-3 text-center d-flex align-items-center">
+                    <p style="margin: 0;padding: 0">Hello, {{ request.user }}!</p>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'logout' %}" class="nav-link active">Logout</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'login' %}" class="nav-link active">Login</a>
+                </li>
+            {% endif %}
+        </ul>
+    </header>
+</div>
+
+{% block content %}
+{% endblock content %}
 
 </body>
 </html>

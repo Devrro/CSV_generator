@@ -2,7 +2,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
-class SomeConsumer(AsyncWebsocketConsumer):
+class FileProcessingConsumer(AsyncWebsocketConsumer):
+
+    def __init__(self):
+        super(FileProcessingConsumer, self).__init__()
+
     async def connect(self):
         await self.accept()
 

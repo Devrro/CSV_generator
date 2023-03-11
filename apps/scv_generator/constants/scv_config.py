@@ -1,0 +1,12 @@
+COMMA_SEP = "1"
+SEMICOLON_SEP = "2"
+QUOTE = "1"
+DOUBLE_QUOTE = "2"
+SEPARATOR_CHOICES = [
+    (COMMA_SEP, ","),
+    (SEMICOLON_SEP, ";"),
+]
+STRING_CHARACTER_CHOICES = [
+    (QUOTE, "'"),
+    (DOUBLE_QUOTE, '"')
+]

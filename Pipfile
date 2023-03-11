@@ -8,6 +8,8 @@ lorem = "*"
 django-extensions = "*"
 django-bootstrap-v5 = "*"
 channels = {extras = ["daphne"], version = "*"}
+isort = "*"
+asgiref = "*"
 
 [dev-packages]
 

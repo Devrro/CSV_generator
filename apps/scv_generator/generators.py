@@ -1,11 +1,12 @@
+import random
 import uuid
 
-from apps.scv_generator.constants.list_data_names import FEMAILE_NAMES, MALE_NAMES, LAST_NAMES
+from lorem.text import TextLorem
+
+from apps.scv_generator.constants.list_data_companies import COMPANIES_NAME
 from apps.scv_generator.constants.list_data_jobs import JOB_TITLES
 from apps.scv_generator.constants.list_data_mails import MAILS_ENDINGS
-from apps.scv_generator.constants.list_data_companies import COMPANIES_NAME
-from lorem.text import TextLorem
-import random
+from apps.scv_generator.constants.list_data_names import FEMAILE_NAMES, LAST_NAMES, MALE_NAMES
 
 
 def get_full_name(gender: str = None) -> str:

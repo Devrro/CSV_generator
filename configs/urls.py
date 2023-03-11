@@ -13,10 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from configs.settings import MEDIA_ROOT, MEDIA_URL, STATIC_ROOT, STATIC_URL
+
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import include, path
+
+from apps.login.views import redirect_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth', include('apps.login.urls'),name='login')
+    path('schemas', include('apps.scv_generator.urls'), name='schemas'),
+    path('auth', include('apps.login.urls'), name='login'),
+    path('', redirect_view, name='redirect_from_main')
 ]
+urlpatterns += static(STATIC_URL, document_root=STATIC_ROOT)
+urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
+
+
+# application = routing.application
