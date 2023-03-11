@@ -1,20 +1,20 @@
 import asyncio
 import json
 
+from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.files.base import ContentFile
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
-from django.core.files.base import ContentFile
-from channels.db import database_sync_to_async
 
-from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaFieldsModel, SchemaFileModel
+from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaFieldsModel, SchemaFileModel, \
+    SchemaConfigsModel
 from apps.scv_generator.serializers import create_schema_model
-
 from apps.scv_generator.services_generator import create_csv_file
-
-from asgiref.sync import sync_to_async
 
 
 class ListMainPage(ListView):
@@ -68,6 +68,7 @@ class SchemaDetailView(LoginRequiredMixin, TemplateView):
                 "data_field_name",
                 "data_type__data_type",
             ),
+            'list_dialect': SchemaConfigsModel.objects.get(data_schema_id=pk),
             'list_files': SchemaFileModel.objects.filter(data_schema_id=pk)
         }
         return self.render_to_response(context)
@@ -75,7 +76,6 @@ class SchemaDetailView(LoginRequiredMixin, TemplateView):
     # queryset = SchemaFieldsModel.objects.filter(key_schema_id=1)
 
 
-import io
 
 
 def save_helper(schema_id, file):
@@ -88,9 +88,9 @@ def save_helper(schema_id, file):
     print("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑")
 
 
-async def http_call_async(request, schema, schema_fields_id, *args, **kwargs):
+async def generate_data_helper(rows, schema, schema_fields_id, options=None, *args, **kwargs):
     sync_file = sync_to_async(create_csv_file)
-    buffer = await sync_file(schema_id=schema_fields_id, rows_count=100)
+    buffer = await sync_file(schema_id=schema_fields_id, rows_count=rows)
     file_db = ContentFile(buffer, name="temp.csv")
     save_schema = sync_to_async(save_helper)
     res = await save_schema(schema.id, file_db)
@@ -98,10 +98,12 @@ async def http_call_async(request, schema, schema_fields_id, *args, **kwargs):
 
 
 async def async_view(request, *args, **kwargs):
+    rows = int(request.POST.get("count_of_rows"))
     schema_fields_id = kwargs.get("pk")
     create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
     schema_model = await create_db_record(data_schema_id=schema_fields_id)
 
     loop = asyncio.get_event_loop()
-    loop.create_task(http_call_async(request, schema_model, schema_fields_id, *args, **kwargs))
+    loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
+
     return HttpResponse("Non-blocking HTTP request")

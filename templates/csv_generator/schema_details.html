@@ -5,9 +5,18 @@
 {% block content %}
     <div class="container">
         <div class="col-9">
-            <button type="button" onclick="send_to_server()">Send hello</button>
             <div class="mt-3">
                 <h2>{{ schema.title }}</h2>
+
+                <p>
+                    {{ list_dialect.separator }}
+                    {{ list_dialect.string_character }}
+{#                    {% for dialect in list_dialect %}#}
+{#                    #}
+{#                        {% dia %}#}
+{#                        #}
+{#                    {% endfor %}#}
+                </p>
                 <table class="table">
                     <thead class="thead-dark">
                     <tr>
@@ -39,8 +48,17 @@
                             <form id="data_generation_form" method="POST">
                                 {% csrf_token %}
                                 <div class="col-6 d-flex flex-column " id="input_data" style="width: 400px">
-                                    <label class="mb-1" for="count_of_rows">Rows: </label>
-                                    <input class="form-control mb-1" id="count_of_rows" placeholder="100" min="1" type="number">
+                                    <label class="mb-1" for="count_of_rows">
+                                        <span>Rows:</span>
+                                        <input
+                                                name="count_of_rows"
+                                                class="form-control mb-1"
+                                                id="count_of_rows"
+                                                placeholder="100"
+                                                value="100"
+                                                min="1"
+                                                type="number">
+                                    </label>
                                     <button type="button" onclick="generate_rows()" class="btn btn-primary"> Generate
                                         data
                                     </button>
@@ -68,14 +86,22 @@
                     <tr>
                         <td>{{ file.id }}</td>
                         <td>{{ file.created }}</td>
-                        <td>{{ file.is_generated }}</td>
+                        <td>
+                            {% if file.is_generated %}
+                                <div style="height: 30px;width: 30px;background-color: #198754; border-radius: 50%"></div>
+                            {% else %}
+                                <div style="height: 30px;width: 30px;background-color: #dc3545; border-radius: 50%"></div>
+                            {% endif %}
+                            {#                            {{ file.is_generated }}#}
+                        </td>
                         <td>
                             <div class="btn-group">
 
-                                <button class="btn btn-danger">DELETE</button>
+                                {#                                <button class="btn btn-danger">DELETE</button>#}
                                 {% if file.is_generated %}
                                     <button class="btn btn-primary">
-                                        <a class="text-light" style="text-decoration: none" href="http://localhost:8000/media/{{ file.csv_file }}">DOWNLOAD</a>
+                                        <a class="text-light" style="text-decoration: none"
+                                           href="http://localhost:8000/media/{{ file.csv_file }}">DOWNLOAD</a>
                                     </button>
                                 {% endif %}
 

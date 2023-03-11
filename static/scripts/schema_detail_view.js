@@ -1,5 +1,6 @@
 function generate_rows() {
     const XHR = new XMLHttpRequest()
+    console.log(document.getElementById("data_generation_form"));
     const FD = new FormData(document.getElementById("data_generation_form"))
     XHR.addEventListener("load", (event) => {
         alert(event.target.responseText);
