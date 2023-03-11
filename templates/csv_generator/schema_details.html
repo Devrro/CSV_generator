@@ -8,15 +8,26 @@
             <div class="mt-3">
                 <h2>{{ schema.title }}</h2>
 
-                <p>
-                    {{ list_dialect.separator }}
-                    {{ list_dialect.string_character }}
-{#                    {% for dialect in list_dialect %}#}
-{#                    #}
-{#                        {% dia %}#}
-{#                        #}
-{#                    {% endfor %}#}
-                </p>
+                <div class="col">
+                    <div class="row d-flex flex-row-reverse">
+                        <label style="width: 300px" for="separator">
+                            <span>Column separator</span>
+                            <select style="width: 100px"
+                                    name="separator" disabled id="">
+                                <option selected value="">{{ list_dialect.separator }}</option>
+                            </select>
+                        </label>
+                        <label style="width: 300px" for="string_char">
+                            <span>String character</span>
+                            <select style="width: 150px" name="string_char" disabled id="">
+                                <option selected value="">{{ list_dialect.string_character }}</option>
+                            </select>
+                        </label>
+
+
+
+                    </div>
+                </div>
                 <table class="table">
                     <thead class="thead-dark">
                     <tr>

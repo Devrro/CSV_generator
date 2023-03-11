@@ -11,8 +11,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
-from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaFieldsModel, SchemaFileModel, \
-    SchemaConfigsModel
+from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, SchemaFileModel
 from apps.scv_generator.serializers import create_schema_model
 from apps.scv_generator.services_generator import create_csv_file
 
@@ -68,14 +67,15 @@ class SchemaDetailView(LoginRequiredMixin, TemplateView):
                 "data_field_name",
                 "data_type__data_type",
             ),
-            'list_dialect': SchemaConfigsModel.objects.get(data_schema_id=pk),
+            'list_dialect': {
+                'separator': SchemaConfigsModel.objects.get(data_schema_id=pk).get_separator_display(),
+                'string_character': SchemaConfigsModel.objects.get(data_schema_id=pk).get_string_character_display()
+            },
             'list_files': SchemaFileModel.objects.filter(data_schema_id=pk)
         }
         return self.render_to_response(context)
 
     # queryset = SchemaFieldsModel.objects.filter(key_schema_id=1)
-
-
 
 
 def save_helper(schema_id, file):

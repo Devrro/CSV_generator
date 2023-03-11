@@ -62,7 +62,7 @@ class SchemaFileModel(models.Model):
     data_schema = models.ForeignKey("DataSchema", on_delete=models.CASCADE)
     is_generated = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
-    csv_file = models.FileField(upload_to=upload_to,blank=True)
+    csv_file = models.FileField(upload_to=upload_to, blank=True)
 
     class Meta:
         db_table = "file_model_schema"

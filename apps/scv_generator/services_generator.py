@@ -1,9 +1,9 @@
 import csv
 import io
 
+from apps.scv_generator.constants.scv_config import SEPARATOR_CHOICES, STRING_CHARACTER_CHOICES
 from apps.scv_generator.generators import generator_dict
 from apps.scv_generator.models import SchemaConfigsModel, SchemaFieldsModel
-from apps.scv_generator.constants.scv_config import SEPARATOR_CHOICES, STRING_CHARACTER_CHOICES
 
 
 def get_csv_fields_options(**kwargs) -> dict:
