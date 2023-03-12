@@ -1,19 +1,18 @@
 import asyncio
 import json
 
-from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files.base import ContentFile
 from django.http.response import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, TemplateView
+from django.views.generic import CreateView, DeleteView, ListView, TemplateView
 
-from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, SchemaFileModel
+from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel,\
+    SchemaFileModel
 from apps.scv_generator.serializers import create_schema_model
-from apps.scv_generator.services_generator import create_csv_file
+from apps.scv_generator.view_helpers import generate_data_helper
 
 
 class ListMainPage(ListView):
@@ -35,7 +34,7 @@ class CreateSchemaView(LoginRequiredMixin, CreateView):
     model = DataSchema
     fields = []
     template_name = 'csv_generator/create_schema.html'
-    success_url = reverse_lazy("localhost:8000")
+    success_url = reverse_lazy("list_user_schemas")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -49,6 +48,13 @@ class CreateSchemaView(LoginRequiredMixin, CreateView):
         new_schema = create_schema_model(user, table_fields, table_options)
 
         return HttpResponse(f'{new_schema.title}')
+
+
+class DeleteSchemaView(LoginRequiredMixin, DeleteView):
+    model = DataSchema
+    queryset = DataSchema.objects.all()
+    template_name = "csv_generator/dataschema_confirm_delete.html"
+    success_url = reverse_lazy("list_user_schemas")
 
 
 class SchemaDetailView(LoginRequiredMixin, TemplateView):
@@ -71,30 +77,9 @@ class SchemaDetailView(LoginRequiredMixin, TemplateView):
                 'separator': SchemaConfigsModel.objects.get(data_schema_id=pk).get_separator_display(),
                 'string_character': SchemaConfigsModel.objects.get(data_schema_id=pk).get_string_character_display()
             },
-            'list_files': SchemaFileModel.objects.filter(data_schema_id=pk)
+            'list_files': SchemaFileModel.objects.filter(data_schema_id=pk).order_by("-created")
         }
         return self.render_to_response(context)
-
-    # queryset = SchemaFieldsModel.objects.filter(key_schema_id=1)
-
-
-def save_helper(schema_id, file):
-    print("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓")
-    print(schema_id)
-    to_update = SchemaFileModel.objects.get(id=schema_id)
-    to_update.csv_file = file
-    to_update.is_generated = True
-    to_update.save()
-    print("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑")
-
-
-async def generate_data_helper(rows, schema, schema_fields_id, options=None, *args, **kwargs):
-    sync_file = sync_to_async(create_csv_file)
-    buffer = await sync_file(schema_id=schema_fields_id, rows_count=rows)
-    file_db = ContentFile(buffer, name="temp.csv")
-    save_schema = sync_to_async(save_helper)
-    res = await save_schema(schema.id, file_db)
-    await asyncio.sleep(1)
 
 
 async def async_view(request, *args, **kwargs):
@@ -104,6 +89,14 @@ async def async_view(request, *args, **kwargs):
     schema_model = await create_db_record(data_schema_id=schema_fields_id)
 
     loop = asyncio.get_event_loop()
-    loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
+    task = loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
 
-    return HttpResponse("Non-blocking HTTP request")
+    payload = json.dumps({
+        "type": "file_record_created",
+        "text": {
+            "schema_id": schema_model.id,
+            "is_generated": schema_model.is_generated,
+            "created": str(schema_model.created),
+            "csv_file": str(schema_model.csv_file),
+        }})
+    return HttpResponse(content=payload)

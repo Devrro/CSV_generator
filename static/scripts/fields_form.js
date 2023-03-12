@@ -1,7 +1,3 @@
-function get_form(id) {
-    let form = document.getElementById(id)
-}
-
 function count_columns_elements() {
     return document.getElementsByClassName("border_style").length
 }
@@ -35,42 +31,31 @@ function create_column() {
 }
 
 
-function send_form_data(form) {
-    e.preventDefault()
-    const FData = new FormData(form)
-    console.log(FData)
-    return 1
-}
-
-
 function sendData() {
     const XHR = new XMLHttpRequest();
     const form = document.getElementById("schema_form_id");
-    // Bind the FormData object and the form element
     const FD = new FormData(form)
     let FormatedData = new FormData()
-    // for (let pair of FD.entries()) {
-    //     console.log(pair[0] + ": " + pair[1]);
-    // }
+
+
     let counter = 0
     let field_index = 0
-    let formated = {}
-    let lst_of_fields = []
     let table_options = {}
     let fields = []
     let field_repr = {}
+
     for (let data_part of FD.entries()) {
         counter++;
-        if (counter === 1){
-            FormatedData.set(data_part[0],data_part[1])
+        if (counter === 1) {
+            FormatedData.set(data_part[0], data_part[1])
         }
         if (counter <= 4 && counter > 1) {
             table_options[data_part[0]] = data_part[1]
         }
-        if (counter > 4){
-            field_index ++;
+        if (counter > 4) {
+            field_index++;
             field_repr[data_part[0]] = data_part[1]
-            if (field_index === 4){
+            if (field_index === 4) {
                 fields.push(field_repr)
                 field_repr = {}
                 field_index = 0;
@@ -79,21 +64,24 @@ function sendData() {
     }
     FormatedData.set('table_options', JSON.stringify(table_options))
     FormatedData.set('fields', JSON.stringify(fields))
-      for (let data_part of FormatedData.entries()) {
-          console.log(data_part[0] + "|" + data_part[1])
-      }
+    // for (let data_part of FormattedData.entries()) {
+    //     console.log(data_part[0] + "|" + data_part[1])
+    // }
+
+    console.log(FormatedData.get("fields"));
+    console.log(1)
+
     // Define what happens on successful data submission
     XHR.addEventListener("load", (event) => {
         alert(event.target.responseText);
     });
+
     // Define what happens in case of error
     XHR.addEventListener("error", (event) => {
         alert('Oops! Something went wrong.');
     });
 
-    // Set up our request
     XHR.open("POST", "http://localhost:8000/schemas/create_schema", false);
-
     // The data sent is what the user provided in the form
     XHR.send(FormatedData);
 }
@@ -110,18 +98,6 @@ function new_submit() {
     });
 }
 
-// function getCookie(name) {
-//     let cookieValue = null;
-//     if (document.cookie && document.cookie !== '') {
-//         let cookies = document.cookie.split(';');
-//         for (let i = 0; i < cookies.length; i++) {
-//             let cookie = cookies[i].trim();
-//             // Does this cookie string begin with the name we want?
-//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
-// }
+function check_value_type(element){
+    console.log(element)
+}
