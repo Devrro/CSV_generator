@@ -8,7 +8,7 @@
                     <a href="{% url 'create_schema' %}" class="btn btn-primary"> Create schema</a>
                 </div>
             </div>
-            <div class="card-body col-8">
+            <div class="card-body col-12">
                 <table class="table">
                     <thead class="thead-dark">
                     <tr>
@@ -22,12 +22,17 @@
                     {% for data_schema in data_schemas %}
                         <tr>
                             <th scope="row">{{ data_schema.id }}</th>
-                            <td><a href="{% url 'schema_details' data_schema.id %}">{{ data_schema.title }}</a></td>
+                            <td>{{ data_schema.title }}</td>
                             <td>{{ data_schema.updated }}</td>
                             <td>
                                 <div class="btn-group w-100" role="group" aria-label="Basic example">
-                                    <button type="button" disabled class="btn btn-secondary">Edit schema</button>
-                                    <button type="button" class="btn btn-danger">Delete</button>
+
+                                    <button type="button" class="btn btn-primary">
+                                        <a class="text-light text-decoration-none" href="{% url "schema_details" data_schema.id %}">Details</a>
+                                    </button>
+                                    <button type="button" class="btn btn-danger">
+                                        <a class="text-light text-decoration-none" href="{% url "delete_schema" data_schema.id %}">Delete</a>
+                                    </button>
                                 </div>
                             </td>
                         </tr>

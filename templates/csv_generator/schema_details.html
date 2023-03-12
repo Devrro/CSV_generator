@@ -76,7 +76,7 @@
             <div class="card-body">
 
             </div>
-            <table class="table">
+            <table id="main_table" class="table">
                 <thead class="thead-dark">
                 <tr>
                     <th scope="col">ID</th>
@@ -88,20 +88,21 @@
                 <tbody>
 
                 {% for file in list_files %}
-                    <tr>
+                    <tr id="data_row_file_id_{{ file.id }}">
                         <td style="vertical-align: middle;">{{ file.id }}</td>
-                        <td style="vertical-align: middle;">{{ file.created }}</td>
+                        <td style="vertical-align: middle;">{{ file.created | date:"d/m/Y H:i" }}</td>
                         <td style="vertical-align: middle;">
                             {% if file.is_generated %}
                                 <div class="d-flex w-100 justify-content-center">
-                                    <div style="height: 30px;width: 30px;background-color: #198754; border-radius: 50%"></div>
+                                    <div id="status_id_{{ file.id }}" class="download_sign"
+                                         style="height: 30px;width: 30px;background-color: #198754; border-radius: 50%"></div>
                                 </div>
                             {% else %}
                                 <div class="d-flex w-100 justify-content-center">
-                                    <div style="height: 30px;width: 30px;background-color: #dc3545; border-radius: 50%"></div>
+                                    <div class="download_sign"
+                                         style="height: 30px;width: 30px;background-color: #dc3545; border-radius: 50%"></div>
                                 </div>
                             {% endif %}
-                            {#                            {{ file.is_generated }}#}
                         </td>
                         <td>
                             <div class="d-flex w-100 justify-content-center">
@@ -109,8 +110,8 @@
 
                                     {#                                <button class="btn btn-danger">DELETE</button>#}
                                     {% if file.is_generated %}
-                                        <button class="btn btn-primary">
-                                            <a class="text-light" style="text-decoration: none"
+                                        <button id="download_button_id_{{ file.id }}" class="btn btn-primary">
+                                            <a id="download_href_id_{{ file.id }}" class="text-light link-host" style="text-decoration: none"
                                                href="http://localhost:8000/media/{{ file.csv_file }}">DOWNLOAD</a>
                                         </button>
                                     {% endif %}
@@ -133,18 +134,18 @@
     <div class="canvas" style="display: none">
         <table>
             <tr id="empty_row">
-                <td id="file_id_field">{{ file.id }}</td>
-                <td id="file_created_field">{{ file.created }}</td>
-                <td id="file">
+                <td id="file_id_field"></td>
+                <td id="file_created_field"></td>
+                <td>
                     <div class="d-flex w-100 justify-content-center">
-                        <div style="height: 30px;width: 30px;background-color: #dc3545; border-radius: 50%"></div>
+                        <div id="status_id_" style="height: 30px;width: 30px;background-color: #dc3545; border-radius: 50%"></div>
                     </div>
                 </td>
                 <td>
                     <div class="d-flex w-100 justify-content-center">
                         <div class="btn-group">
-                            <button disabled class="btn btn-primary">
-                                <a class="text-light" style="text-decoration: none"
+                            <button id="download_button_id_" disabled class="btn btn-primary">
+                                <a id="download_href_id_" class="text-light" style="text-decoration: none"
                                    href="#">DOWNLOAD</a>
                             </button>
                         </div>

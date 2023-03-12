@@ -6,7 +6,6 @@ socket.onmessage = function (event) {
 
 socket.addEventListener('open', event => {
     console.log('WebSocket connection established!');
-    console.log("finished")
     socket.send(JSON.stringify({
         'command': 'join',
         'group': 'file_creation',

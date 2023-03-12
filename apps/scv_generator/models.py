@@ -1,8 +1,10 @@
+from asgiref.sync import async_to_sync
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import UniqueConstraint
 
-from apps.scv_generator.services import upload_to
+from apps.scv_generator.services import send_message_file_updates, upload_to
 
 UserModel = get_user_model()
 
@@ -63,6 +65,21 @@ class SchemaFileModel(models.Model):
     is_generated = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     csv_file = models.FileField(upload_to=upload_to, blank=True)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        super().save(force_insert, force_update, using, update_fields)
+        if self.is_generated:
+            payload = {
+                "type": "file_updates",
+                "text": {
+                    "schema_id": self.id,
+                    "is_generated": self.is_generated,
+                    "created": str(self.created),
+                    "csv_file": str(self.csv_file),
+                },
+            }
+            send_updates = async_to_sync(send_message_file_updates)
+            send_updates("file_processing", payload)
 
     class Meta:
         db_table = "file_model_schema"

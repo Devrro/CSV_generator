@@ -1,7 +1,7 @@
 # myapp/consumers.py
 import json
-from asgiref.sync import sync_to_async, async_to_sync
 
+from asgiref.sync import async_to_sync, sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 
