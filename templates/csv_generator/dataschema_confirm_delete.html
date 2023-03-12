@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="container w-100 d-flex justify-content-center" style="margin-top: 200px">
+        <div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="d-flex flex-column">
+                    <div class="my-2">Do you want to delete schema?</div>
+                    {#                <button class="btn btn-primary">#}
+                    <input class="btn btn-danger" type="submit" value="Delete">
+                    {#                </button>#}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

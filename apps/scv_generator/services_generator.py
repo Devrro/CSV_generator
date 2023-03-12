@@ -49,7 +49,6 @@ def create_csv_file(
     column_heads = [field["data_field_name"] for field in list_of_fields]
     column_operators = [field["data_type__data_type"] for field in list_of_fields]
     options = get_csv_fields_options(**kwargs)
-    tmp_file_path: str = ''
 
     buffer = io.StringIO('', newline='')
     writer = csv.writer(
@@ -69,14 +68,5 @@ def create_csv_file(
                 continue
             generated_value = generator_dict.get(operator, None)()
             value.append(generated_value)
-        if rows_count % 1000 == 0:
-            print(value)
         writer.writerow(value)
-    # csv_file.close()
-
-    # buffer = BytesIO()
-    # img.save(stream=buffer, format="CSV")
     return buffer.getvalue()
-# with open(file, "r") as n_file:
-#     buffer.writelines(n_file.readlines())
-# return tmp_file_path

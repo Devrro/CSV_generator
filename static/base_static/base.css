@@ -6,7 +6,7 @@ body {
     background-color: var(--main-light-background);
 }
 
-p{
+p {
     margin: 0;
     padding: 0;
 }
@@ -14,6 +14,11 @@ p{
 .border_style {
     border: 1px solid rgb(100%, 100%, 100%);
 }
+
 .border_style:hover {
     border: 1px solid rgb(90%, 90%, 90%);
+}
+
+td {
+    vertical-align: middle;
 }
