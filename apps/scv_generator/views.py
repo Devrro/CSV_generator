@@ -3,13 +3,14 @@ import json
 
 from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
+from channels.db import database_sync_to_async
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.base import ContentFile
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, TemplateView
+from django.views.generic import CreateView, ListView, TemplateView
 
 from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, \
     SchemaFileModel
@@ -74,7 +75,7 @@ class SchemaDetailView(LoginRequiredMixin, TemplateView):
                 'separator': SchemaConfigsModel.objects.get(data_schema_id=pk).get_separator_display(),
                 'string_character': SchemaConfigsModel.objects.get(data_schema_id=pk).get_string_character_display()
             },
-            'list_files': SchemaFileModel.objects.filter(data_schema_id=pk)
+            'list_files': SchemaFileModel.objects.filter(data_schema_id=pk).order_by("-created")
         }
         return self.render_to_response(context)
 
@@ -82,16 +83,13 @@ class SchemaDetailView(LoginRequiredMixin, TemplateView):
 
 
 def save_helper(schema_id, file):
-    print("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓")
-    print(schema_id)
     to_update = SchemaFileModel.objects.get(id=schema_id)
     to_update.csv_file = file
     to_update.is_generated = True
     to_update.save()
-    print("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑")
 
 
-async def generate_data_helper(rows, schema, schema_fields_id, options=None, *args, **kwargs):
+async def generate_data_helper(rows, schema, schema_fields_id, *args, **kwargs):
     sync_file = sync_to_async(create_csv_file)
     buffer = await sync_file(schema_id=schema_fields_id, rows_count=rows)
     file_db = ContentFile(buffer, name="temp.csv")
@@ -100,24 +98,30 @@ async def generate_data_helper(rows, schema, schema_fields_id, options=None, *ar
     await asyncio.sleep(1)
 
 
-async def async_view(request, *args, **kwargs):
-    # rows = int(request.POST.get("count_of_rows"))
-    # schema_fields_id = kwargs.get("pk")
-    # create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
-    # schema_model = await create_db_record(data_schema_id=schema_fields_id)
-    # loop = asyncio.get_event_loop()
-    # loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
-
+async def send_message_file_updates(channel_name, data: dict):
     channel_layer = get_channel_layer()
-    channel_layer.group_send(
-        "file_creation",
-        {"type": "message",  # Custom type
-         "text": "Hello from HTTP view", }
+    await channel_layer.group_send(channel_name, data)
+
+
+async def async_view(request, *args, **kwargs):
+    rows = int(request.POST.get("count_of_rows"))
+    schema_fields_id = kwargs.get("pk")
+    create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
+    schema_model = await create_db_record(data_schema_id=schema_fields_id)
+
+    await send_message_file_updates(
+        "file_processing",
+        {
+            "type": "file_updates",
+            "text": json.dumps({
+                "schema_id": schema_model.id,
+                "is_generated": schema_model.is_generated,
+                "created": str(schema_model.created),
+                "csv_file": str(schema_model.csv_file),
+            }),
+        }
     )
-    # print(channel_layer)
-    # channel_layer.send({
-    #     "type": "send_file_message",
-    #     "text": "Hello there!",
-    # })
+    loop = asyncio.get_event_loop()
+    loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
 
     return HttpResponse("Data is being generated...Please wait")

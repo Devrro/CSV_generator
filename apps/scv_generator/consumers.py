@@ -14,24 +14,22 @@ class FileProcessingConsumer(AsyncWebsocketConsumer):
         self.websocket_id = None
 
     async def connect(self):
+        await self.accept()
         await self.channel_layer.group_add(
-            "file_creation",  # Group name
+            "file_processing",  # Group name
             self.channel_name,
         )
-        await self.accept()
         self.room_name = "test"
-        self.websocket_id = self.channel_name
 
     async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            "file_processing",  # Group name
+            self.channel_name,
+        )
         await self.send(text_data=close_code)
 
-    async def receive(self, text_data):
+    async def receive(self, text_data): # noqa
         await self.send(text_data=text_data)
 
-    async def my_message(self, event):
-        await self.send(text_data=event["text"])
-    async def send_file_message(self, message):
-        await self.send(text_data=json.dumps({
-            'type': 'message',
-            'message': message
-        }))
+    async def file_updates(self, event):
+        await self.send(json.dumps(event))

@@ -15,3 +15,5 @@ function generate_rows() {
     // // The data sent is what the user provided in the form
     XHR.send(FD);
 }
+
+
