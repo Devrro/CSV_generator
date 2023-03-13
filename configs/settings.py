@@ -131,8 +131,8 @@ LOGIN_URL = 'auth/login'
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = ''
-STATIC_URL = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = 'os.path.join(BASE_DIR, 'static')'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = ('static',)
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
