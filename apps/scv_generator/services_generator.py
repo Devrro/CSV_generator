@@ -43,8 +43,8 @@ def create_csv_file(
             "string_character"
         ))[0]
 
-    separator_symbol = SEPARATOR_CHOICES[int(separator_id)-1][1]
-    string_char_symbol = STRING_CHARACTER_CHOICES[int(separator_id)-1][1]
+    separator_symbol = SEPARATOR_CHOICES[int(separator_id) - 1][1]
+    string_char_symbol = STRING_CHARACTER_CHOICES[int(separator_id) - 1][1]
 
     column_heads = [field["data_field_name"] for field in list_of_fields]
     column_operators = [field["data_type__data_type"] for field in list_of_fields]

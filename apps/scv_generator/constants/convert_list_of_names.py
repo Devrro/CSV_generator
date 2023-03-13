@@ -18,6 +18,3 @@ def create_data_from_txt(
                 title = f'"{title}",'
                 titles.write(title)
             titles.write("]")
-
-
-create_data_from_txt("list_data_companies.py", "list_data_companies.txt", list_name="COMPANIES_NAME", count_data=600)

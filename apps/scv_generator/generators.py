@@ -12,7 +12,8 @@ from apps.scv_generator.constants.list_data_names import FEMAILE_NAMES, LAST_NAM
 def get_full_name(gender: str = None) -> str:
     """
     Get string with full name
-    :param gender: Leave empty for random gender. Write 'male' of 'female' to get corresponding full names
+    :param gender: Leave empty for random gender.
+     Write 'male' of 'female' to get corresponding full names
     :return: Returns formatted full name
     """
 
@@ -71,7 +72,11 @@ def get_email(
     return "".join(address)
 
 
-def get_phone_number(country_code: str = "38", operator_code: str = "098", number_of_digits_after: int = 7):
+def get_phone_number(
+        country_code: str = "38",
+        operator_code: str = "098",
+        number_of_digits_after: int = 7
+):
     last_digits = [str(random.randint(0, 9)) for _ in range(number_of_digits_after)]
     return f"+{country_code}{operator_code}{''.join(last_digits)}"
 

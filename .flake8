@@ -1,0 +1,20 @@
+[flake8]
+inline-quotes = "
+ignore = E203, E266, W503, ANN002, ANN003, ANN101, ANN102, ANN401, N807, N818
+max-line-length = 90
+max-complexity = 18
+select = B,C,E,F,W,T4,B9,ANN,Q0,N8,VNE
+exclude =
+    **migrations,
+    venv,
+    tests,
+    .venv,
+    .idea,
+    idea,
+    media,
+    static,
+    templates,
+    apps/scv_generator/constants/list_data_companies.py,
+    apps/scv_generator/constants/list_data_jobs.py,
+    apps/scv_generator/constants/list_data_mails.py,
+    apps/scv_generator/constants/list_data_names.py,

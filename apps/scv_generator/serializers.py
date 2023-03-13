@@ -38,7 +38,8 @@ def create_schema_model(user, fields: list[dict], table_options: dict):
         for json_option in json_options:
             FieldsSavedOptionsModel.objects.create(
                 key_field_schema=(
-                    list(filter(lambda x: x.order == int(json_option.get("order")), schema_fields))[0],
+                    list(filter(
+                        lambda x: x.order == int(json_option.get("order")), schema_fields))[0],
                     schema_fields),
                 options=json_option.get("oprion_values")
             )

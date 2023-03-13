@@ -1,7 +1,3 @@
-from asyncio import get_event_loop
-
-from asgiref.sync import sync_to_async
-
 from django.core.files.base import ContentFile
 
 from apps.scv_generator.models import SchemaFileModel

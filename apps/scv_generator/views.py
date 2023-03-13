@@ -1,19 +1,16 @@
-import asyncio
 import json
 from typing import Any
 
-from channels.db import database_sync_to_async
-
 from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView
 
-from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, \
-    SchemaFileModel
+from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, SchemaFileModel
 from apps.scv_generator.serializers import create_schema_model
 from apps.scv_generator.view_helpers import generate_data_helper
 
@@ -92,7 +89,6 @@ async def async_view(request, *args, **kwargs):
     schema_fields_id = kwargs.get("pk")
     create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
     schema_model = await create_db_record(data_schema_id=schema_fields_id)
-
 
     await sync_to_async(
         generate_data_helper
