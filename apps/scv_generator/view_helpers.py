@@ -12,10 +12,6 @@ def save_helper(schema_id, file):
 
 
 def generate_data_helper(rows, schema, schema_fields_id, *args, **kwargs):
-    # loop = get_event_loop()
     buffer = create_csv_file(schema_fields_id, rows)
-    # buffer = await loop.run_in_executor(None, create_csv_file, schema_fields_id, rows)
-    # sync_file = sync_to_async(create_csv_file)
-    # buffer = await sync_file(schema_id=schema_fields_id, rows_count=rows)
     file_db = ContentFile(buffer, name="temp.csv")
     save_helper(schema.id, file_db)
