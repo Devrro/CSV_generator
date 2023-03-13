@@ -4,15 +4,11 @@
     socket.onmessage = function (event) {
 
         let data = JSON.parse(event.data)
-        console.log(data)
         window.setTimeout(() => {
             change_file_status(data)
         }, 1000)
     }
 
-    function get_row(id) {
-        console.log(document.getElementById(id))
-    }
 
     function change_file_status(data) {
         if (data.type === "file_updates") {
@@ -37,7 +33,6 @@
 
     socket.addEventListener('open', event => {
         console.log('WebSocket connection established!');
-        console.log("finished")
         socket.send(JSON.stringify({
             'command': 'join',
             'group': 'file_creation',

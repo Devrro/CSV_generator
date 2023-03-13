@@ -1,0 +1,1 @@
+let url_host = document.URL

@@ -9,7 +9,7 @@ from asgiref.sync import sync_to_async
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView
 
 from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, \
@@ -45,15 +45,14 @@ class CreateSchemaView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse_lazy("list_user_schemas")
+        return reverse("list_user_schemas")
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
         table_fields = json.loads(self.request.POST.get("fields"))
         table_options = json.loads(self.request.POST.get("table_options"))
         user = self.request.user
         new_schema = create_schema_model(user, table_fields, table_options)
-
-        return HttpResponseRedirect(reverse_lazy('list_user_schemas'))
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class DeleteSchemaView(LoginRequiredMixin, DeleteView):
@@ -94,8 +93,7 @@ async def async_view(request, *args, **kwargs):
     create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
     schema_model = await create_db_record(data_schema_id=schema_fields_id)
 
-    # loop = asyncio.get_event_loop()
-    # task = loop.create_task(
+
     await sync_to_async(
         generate_data_helper
     )(rows, schema_model, schema_fields_id, *args, **kwargs)

@@ -68,15 +68,15 @@ function sendData() {
 
     // Define what happens on successful data submission
     XHR.addEventListener("load", (event) => {
-        alert(event.target.responseText);
+        window.location.href = event.target.responseURL;
     });
 
-    // Define what happens in case of error
     XHR.addEventListener("error", (event) => {
         alert('Oops! Something went wrong.');
     });
 
-    XHR.open("POST", "http://localhost:8000/schemas/create_schema", false);
+
+    XHR.open("POST", url_host, false);
     // The data sent is what the user provided in the form
     XHR.send(FormatedData);
 }
