@@ -64,18 +64,11 @@ function sendData() {
     }
     FormatedData.set('table_options', JSON.stringify(table_options))
     FormatedData.set('fields', JSON.stringify(fields))
-    // for (let data_part of FormattedData.entries()) {
-    //     console.log(data_part[0] + "|" + data_part[1])
-    // }
 
-    console.log(FormatedData.get("fields"));
-    console.log(1)
 
     // Define what happens on successful data submission
     XHR.addEventListener("load", (event) => {
         window.location.href = event.target.responseURL
-
-
     });
 
     // Define what happens in case of error
@@ -101,5 +94,5 @@ function new_submit() {
 }
 
 function check_value_type(element) {
-    console.log(element)
+    // console.log(element)
 }
