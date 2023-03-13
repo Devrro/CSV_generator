@@ -1,15 +1,18 @@
 import asyncio
 import json
+from typing import Any
 
 from channels.db import database_sync_to_async
 
+from asgiref.sync import sync_to_async
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView
 
-from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel,\
+from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, \
     SchemaFileModel
 from apps.scv_generator.serializers import create_schema_model
 from apps.scv_generator.view_helpers import generate_data_helper
@@ -24,9 +27,9 @@ class ListUserSchemas(LoginRequiredMixin, ListView):
     model = DataSchema
     context_object_name = "data_schemas"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['data_schemas'] = context['data_schemas'].filter(user=self.request.user)
+        context['data_schemas'] = context['data_schemas'].filter(user=self.request.user).order_by("-created")
         return context
 
 
@@ -36,18 +39,21 @@ class CreateSchemaView(LoginRequiredMixin, CreateView):
     template_name = 'csv_generator/create_schema.html'
     success_url = reverse_lazy("list_user_schemas")
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["field_types"] = FieldDataTypesModel.objects.all().values()
         return context
 
-    def post(self, request, *args, **kwargs):
+    def get_success_url(self):
+        return reverse_lazy("list_user_schemas")
+
+    def post(self, request, *args, **kwargs) -> HttpResponse:
         table_fields = json.loads(self.request.POST.get("fields"))
         table_options = json.loads(self.request.POST.get("table_options"))
         user = self.request.user
         new_schema = create_schema_model(user, table_fields, table_options)
 
-        return HttpResponse(f'{new_schema.title}')
+        return HttpResponseRedirect(reverse_lazy('list_user_schemas'))
 
 
 class DeleteSchemaView(LoginRequiredMixin, DeleteView):
@@ -88,8 +94,12 @@ async def async_view(request, *args, **kwargs):
     create_db_record = database_sync_to_async(SchemaFileModel.objects.create)
     schema_model = await create_db_record(data_schema_id=schema_fields_id)
 
-    loop = asyncio.get_event_loop()
-    task = loop.create_task(generate_data_helper(rows, schema_model, schema_fields_id, *args, **kwargs))
+    # loop = asyncio.get_event_loop()
+    # task = loop.create_task(
+    await sync_to_async(
+        generate_data_helper
+    )(rows, schema_model, schema_fields_id, *args, **kwargs)
+    # )
 
     payload = json.dumps({
         "type": "file_record_created",

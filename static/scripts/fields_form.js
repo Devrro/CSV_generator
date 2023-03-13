@@ -64,12 +64,7 @@ function sendData() {
     }
     FormatedData.set('table_options', JSON.stringify(table_options))
     FormatedData.set('fields', JSON.stringify(fields))
-    // for (let data_part of FormattedData.entries()) {
-    //     console.log(data_part[0] + "|" + data_part[1])
-    // }
 
-    console.log(FormatedData.get("fields"));
-    console.log(1)
 
     // Define what happens on successful data submission
     XHR.addEventListener("load", (event) => {
@@ -98,6 +93,11 @@ function new_submit() {
     });
 }
 
-function check_value_type(element){
-    console.log(element)
+function check_value_type(element) {
+
+    if (element.value === 7) {
+        let gender_select = document.getElementById("gender").cloneNode(true)
+        gender_select.id = element.parentElement.parentElement.parentElement.id
+    }
+
 }

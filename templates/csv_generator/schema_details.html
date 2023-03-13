@@ -111,8 +111,16 @@
                                     {#                                <button class="btn btn-danger">DELETE</button>#}
                                     {% if file.is_generated %}
                                         <button id="download_button_id_{{ file.id }}" class="btn btn-primary">
-                                            <a id="download_href_id_{{ file.id }}" class="text-light link-host" style="text-decoration: none"
-                                               href="http://localhost:8000/media/{{ file.csv_file }}">DOWNLOAD</a>
+                                            <a id="download_href_id_{{ file.id }}" class="text-light link-host"
+                                               style="text-decoration: none"
+                                               href="http://alereo.pythonanywhere.com/media/{{ file.csv_file }}">DOWNLOAD</a>
+                                        </button>
+                                    {% else %}
+                                        <button disabled class="btn btn-primary">
+                                            <a id="download_href_id_{{ file.id }}" class="text-light link-host"
+                                               style="text-decoration: none"
+
+                                               href="#">DOWNLOAD</a>
                                         </button>
                                     {% endif %}
 
@@ -138,7 +146,8 @@
                 <td id="file_created_field"></td>
                 <td>
                     <div class="d-flex w-100 justify-content-center">
-                        <div id="status_id_" style="height: 30px;width: 30px;background-color: #dc3545; border-radius: 50%"></div>
+                        <div id="status_id_"
+                             style="height: 30px;width: 30px;background-color: #dc3545; border-radius: 50%"></div>
                     </div>
                 </td>
                 <td>

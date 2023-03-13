@@ -85,13 +85,14 @@ def get_text(words_count: int = 30) -> str:
     return TextLorem(srange=(words_count, words_count)).sentence()
 
 
-def get_integer(number_of_digits: int = 5) -> str:
+def get_integer(range_from: int = 0, range_to: int = 10000) -> str:
     """
     Return number of needed length
-    :param number_of_digits:
+    :param range_from:
+    :param range_to:
     :return:
     """
-    return "".join([str(random.randint(0, 9)) for _ in range(number_of_digits)])
+    return "".join(str(random.randint(range_from, range_to)))
 
 
 generator_dict = {

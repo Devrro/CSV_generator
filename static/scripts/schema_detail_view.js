@@ -55,3 +55,4 @@ function generate_rows() {
     XHR.send(FD);
 }
 
+let url_context = document.URL
