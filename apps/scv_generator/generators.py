@@ -58,7 +58,7 @@ def get_email(
     :return:
     """
     if not full_name:
-        full_name = "".join(str(uuid.uuid1()).split("-"))
+        full_name = "".join((str(uuid.uuid4()).split("-"))[-1])
     address = [] if start is None else [start]
     address.append(".".join(full_name.lower().split(" ")))
     if ending:

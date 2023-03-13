@@ -22,8 +22,8 @@ function create_new_row(row_to_copy_id, new_data) {
     href.id = `download_href_id_${schema_id}`
 
     if (ins_before_first_row === null) {
-        let table = document.getElementById('main_table')
-        table.appendChild(canvas_row)
+        let table_body = document.getElementById('main_table_body')
+        table_body.appendChild(canvas_row)
     } else {
         ins_before_first_row.before(canvas_row)
 

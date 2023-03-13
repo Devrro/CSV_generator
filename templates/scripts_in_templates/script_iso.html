@@ -1,0 +1,49 @@
+<script>
+    const socket = new WebSocket('ws://localhost:8000/websocket');
+
+    socket.onmessage = function (event) {
+
+        let data = JSON.parse(event.data)
+        window.setTimeout(() => {
+            change_file_status(data)
+        }, 1000)
+    }
+
+
+    function change_file_status(data) {
+        if (data.type === "file_updates") {
+            const inner_data = data.text
+            if (inner_data["is_generated"] === true) {
+                console.log("WebSocket data update!")
+                const sign_id = `status_id_${inner_data["schema_id"]}`
+                const button_id = `download_button_id_${inner_data["schema_id"]}`
+                {#const element_id = `data_row_file_id_${inner_data["schema_id"]}`#}
+                const href_id = `download_href_id_${inner_data["schema_id"]}`
+                const current_status = document.getElementById(sign_id)
+                const download_button = document.getElementById(button_id)
+                const button_href_element = document.getElementById(href_id)
+                button_href_element.href = "http://localhost:8000/media/" + inner_data["csv_file"]
+                download_button.disabled = false
+                download_button.id = button_id
+
+                current_status.style.backgroundColor = "#198754"
+            }
+        }
+        return undefined
+    }
+
+    socket.addEventListener('open', event => {
+        console.log('WebSocket connection established!');
+        socket.send(JSON.stringify({
+            'command': 'join',
+            'group': 'file_creation',
+        }));
+    });
+
+    // Listen for the 'message' event, which is triggered when a message is received
+    // socket.addEventListener("any", event =>{
+    //     console.log(`${event.data}`)
+    // })
+    // Send a message to the server
+
+</script>
