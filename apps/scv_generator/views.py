@@ -70,7 +70,7 @@ class SchemaDetailView(LoginRequiredMixin, TemplateView):
             'schema': schema,
             'list_fields': SchemaFieldsModel.objects.filter(
                 key_schema_id=pk
-            ).values(
+            ).order_by("order").values(
                 "order",
                 "data_field_name",
                 "data_type__data_type",
