@@ -14,6 +14,7 @@
         if (data.type === "file_updates") {
             const inner_data = data.text
             if (inner_data["is_generated"] === true) {
+                console.log("Update file from websocket")
                 const sign_id = `status_id_${inner_data["schema_id"]}`
                 const button_id = `download_button_id_${inner_data["schema_id"]}`
                 {#const element_id = `data_row_file_id_${inner_data["schema_id"]}`#}
@@ -21,7 +22,7 @@
                 const current_status = document.getElementById(sign_id)
                 const download_button = document.getElementById(button_id)
                 const button_href_element = document.getElementById(href_id)
-                button_href_element.href = "http://alereo.pythonanywhere.com/media/" + inner_data["csv_file"]
+                button_href_element.href = "http://localhost:8000/media/" + inner_data["csv_file"]
                 download_button.disabled = false
                 download_button.id = button_id
 
