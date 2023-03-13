@@ -4,12 +4,12 @@ import json
 from channels.db import database_sync_to_async
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, TemplateView
 
-from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel,\
+from apps.scv_generator.models import DataSchema, FieldDataTypesModel, SchemaConfigsModel, SchemaFieldsModel, \
     SchemaFileModel
 from apps.scv_generator.serializers import create_schema_model
 from apps.scv_generator.view_helpers import generate_data_helper
@@ -26,7 +26,7 @@ class ListUserSchemas(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['data_schemas'] = context['data_schemas'].filter(user=self.request.user)
+        context['data_schemas'] = context['data_schemas'].filter(user=self.request.user).order_by("-created")
         return context
 
 
@@ -41,13 +41,16 @@ class CreateSchemaView(LoginRequiredMixin, CreateView):
         context["field_types"] = FieldDataTypesModel.objects.all().values()
         return context
 
+    def get_success_url(self):
+        return reverse_lazy("list_user_schemas")
+
     def post(self, request, *args, **kwargs):
         table_fields = json.loads(self.request.POST.get("fields"))
         table_options = json.loads(self.request.POST.get("table_options"))
         user = self.request.user
         new_schema = create_schema_model(user, table_fields, table_options)
 
-        return HttpResponse(f'{new_schema.title}')
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class DeleteSchemaView(LoginRequiredMixin, DeleteView):

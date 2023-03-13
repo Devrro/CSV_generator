@@ -73,7 +73,9 @@ function sendData() {
 
     // Define what happens on successful data submission
     XHR.addEventListener("load", (event) => {
-        alert(event.target.responseText);
+        window.location.href = event.target.responseURL
+
+
     });
 
     // Define what happens in case of error
@@ -98,6 +100,6 @@ function new_submit() {
     });
 }
 
-function check_value_type(element){
+function check_value_type(element) {
     console.log(element)
 }
