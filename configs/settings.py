@@ -62,7 +62,9 @@ ROOT_URLCONF = 'configs.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [
+            os.path.join(BASE_DIR,'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,7 +132,7 @@ LOGIN_URL = 'auth/login'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = ''
-STATIC_URL = '/static/'
+STATIC_URL = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = ('static',)
 
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
